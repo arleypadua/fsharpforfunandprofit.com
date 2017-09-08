@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Migrando do C# para o F#: Introdução"
-description: "Three approaches to porting existing C# code to F#"
+description: "Três abordagens de converter um código existente em C# para o F#"
 nav: fsharp-types
 seriesId: "Porting from C#"
 seriesOrder: 1
