@@ -75,5 +75,5 @@ Para ver como esses três níveis funcionam na prática, vamos aplicá-los em al
 * Após o primeiro exemplo, vamos olhar em um código de carrinho de compras, baseado [nesse exemplo](/posts/designing-for-correctness/).
 * O exemplo final é um código que representa os estados de um sistema de catraca de metrô, também baseado em um exemplo do Bob Martin. Esse exemplo demonstra como os union types no F# podem representar um modelo de estado de transição com mais facilidade do que uma abordagem orientada ao objeto.
 
-Mas primeiro, vamos começar nos exemplos detalhados, vamos voltar ao básico e fazer algumas conversões simples. Isso será o assunto do próximo post.
+Mas antes de começar nos exemplos detalhados, vamos voltar ao básico e fazer algumas conversões simples. Isso será o assunto do próximo post.
 
