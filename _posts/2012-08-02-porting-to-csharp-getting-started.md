@@ -1,380 +1,382 @@
 ---
 layout: post
-title: "Getting started with direct porting"
-description: "F# equivalents to C#"
+title: "Iniciando com a conversão direta"
+description: "Equivalências do C# e F#"
 nav: fsharp-types
 seriesId: "Porting from C#"
 seriesOrder: 2
 ---
 
-Before we get started on the detailed examples, we'll go back to basics and do some simple porting of trivial examples.
+Antes de começar com os exemplos detalhados, vamos voltar ao básico e fazer algumas conversões triviais.
 
-In this post and the next, we'll look at the nearest F# equivalents to common C# statements and keywords, to guide you when doing direct ports.
+Nesse posst, vamos chegar à equivalência de statements e keywords mais próxima do F# e do C# para te guiar ao fazer as conversões diretas.
 
-## Basic syntax conversion guidelines ##
+## Sintaxe básica de conversão ##
 
-Before starting a port, you need to understand how F# syntax is different from C# syntax. This section presents some general guidelines for converting from one to another. (For a quick overview of F# syntax as a whole, see ["F# syntax in 60 seconds"](/posts/fsharp-in-60-seconds/))
+Antes de iniciar a conversão, você precisa entender a diferença entra a sintaxe do F# e do F#. Essa seção apresenta algumas instruções gerais para converter de um para outro. (Como um rápido lembrete da sintaxe do F# como um todo, veja o post: ["Sintaxe do F# em 60 segundos"](/posts/fsharp-in-60-seconds/))
 
-### Curly braces and indentation ###
+### Chaves e identação ###
 
-C# uses curly braces to indicate the start and end of a block of code. F# generally just uses indentation.  
+O C# usa as chaves para indicar o início e o fim de um bloco de código. O F# utiliza a identação para definir blocos de código.
 
-Curly braces are used in F#, but not for blocks of code. Instead, you will see them used:
+Chaves também são usadas no F#, mas ao invés do C#, são usadas:
 
-* 	For definitions and usage of "record" types. 
-* 	In conjunction with computation expressions, such as `seq` and `async`. In general, you will not be using these expressions for basic ports anyway.
+* 	Para definições e uso dos "record" types.
+* 	Em conjunto com expressões de computação, como `seq` e `async`. Em geral, você não usará essas expressões nas conversões básicas.
 
-For details on the indentation rules, [see this post](/posts/fsharp-syntax).
+Para detalhes nas regras de identação, [veja esse post](/posts/fsharp-syntax).
 
-### Semicolons
+### Ponto e vírgula (;)
 
-Unlike C#'s semicolon, F# does not require any kind of line or statement terminator.
+Diferente do C#, o F# não exige nenhum tipo de sinalizador de fim da linha.
 
-### Commas
+### Vírgulas
 
-F# does not use commas for separating parameters or list elements, so remember not to use commas when porting!
+O F# não usa vírgulas para separar lista de elementos como é feito no C#. Lembre-se de não usar vírgulas na conversão!
 
-*For separating list elements, use semicolons rather than commas.*
-
-```csharp
-// C# example
-var list = new int[] { 1,2,3}
-```
-
-```fsharp
-// F# example
-let list = [1;2;3] // semicolons
-```
-
-*For separating parameters for native F# functions, use white space.*
+*Para separar uma lista de elementos, use ponto e vírgula ao invés da vírgula*
 
 ```csharp
-// C# example 
-int myFunc(int x, int y, int z) { ... function body ...}
+// Exemplo em C#
+var list = new int[] { 1,2,3 }
 ```
 
 ```fsharp
-// F# example 
-let myFunc (x:int) (y:int) (z:int) :int = ... function body ...
-let myFunc x y z = ... function body ...
+// Exemplo em F#
+let list = [1;2;3] // ponto e vírgula
 ```
 
-Commas are generally only used for tuples, or for separating parameters when calling .NET library functions. (See [this post](/posts/defining-functions/#tuples) for more on tuples vs multiple parameters)
-
-### Defining variables, functions and types
-
-In F#, definitions of both variables and functions use the form:
-
-```fsharp
-let someName = // the definition
-```
-
-Definitions for all types (classes, structures, interfaces, etc.) use the form:
-
-```fsharp
-type someName = // the definition
-```
-
-The use of the `=` sign is an important difference between F# and C#. Where C# uses curly braces, F# uses the `=` and then the following block of code must be indented.
-
-### Mutable values
-
-In F#, values are immutable by default. If you are doing a direct imperative port, you probably need to make some of the values mutable, using the `mutable` keyword.
-Then to assign to the values, use the `<-` operator, not the equals sign.
+*Para separar parâmetros de funções nativas do F#, use espaços em branco*
 
 ```csharp
-// C# example 
-var variableName = 42
-variableName = variableName + 1
+// Exemplo em C#
+int minhaFuncao(int x, int y, int z) { ... corpo da função ...}
 ```
 
 ```fsharp
-// F# example 
-let mutable variableName = 42
-variableName <- variableName + 1
+// Exemplo em F#
+let minhaFuncao (x:int) (y:int) (z:int) :int = ... corpo da função ...
+let minhaFuncao x y z = ... corpo da função ...
 ```
 
-### Assignment vs. testing for equality 
+Vírgulas são geralmente usadas para tuplas ou para separar parâmetros ao chamar funções de bibliotecas do .NET. (Veja [esse post](/posts/defining-functions/#tuples) para mais informações sobre Tuplas vs Vários Parâmetros)
 
-In C#, the equals sign is used for assignment, and the double equals `==` is used for testing equality. 
+### Declarando variáveis, funções e tipos
 
-However in F#, the equals sign is used for testing equality, and is also used to initially bind values to other values when declared,
+Para declarar variáveis e funções no F#, faça da seguinte forma:
 
 ```fsharp
-let mutable variableName = 42     // Bound to 42 on declaration
-variableName <- variableName + 1  // Mutated (reassigned)
-variableName = variableName + 1   // Comparison not assignment! 
+let qualquerCoisa = // definição
 ```
 
-To test for inequality, use SQL-style `<>` rather than `!=`
+Para declarar todos os tipos (classes, estruturas, interfaces, etc.) faça da seguinte forma:
 
 ```fsharp
-let variableName = 42             // Bound to 42 on declaration
-variableName <> 43                // Comparison will return true.
-variableName != 43                // Error FS0020.
+type qualquerTipo = // definição
 ```
 
-If you accidentally use `!=` you will probably get an [error FS0020](/troubleshooting-fsharp/#FS0020).
+O uso do símbolo `=` representa uma diferença importante entre o F# e o C#. Quando no C# se usa chaves, no F# usa-se o símbolo `=` e então o bloco de código seguinte deve ser identado.
 
-## Conversion example #1
+### Valores mutáveis
 
-With these basic guidelines in place, let's look at some real code examples, and do a direct port for them.
+No F#, os valores são imutáveis por padrão. Se você estiver fazendo uma conversão direta, você provavelmente terá que tornar alguns valores em valores mutáveis, para isso basta usar a keyword `mutable`.
+Então para atribuir valores, use o operador `<-` e não o símbolo de igualdade.
 
-This first example has some very simple code, which we will port line by line. Here's the C# code.
+```csharp
+// Exemplo em C#
+var nomeDaVariavel = 42
+nomeDaVariavel = nomeDaVariavel + 1
+```
+
+```fsharp
+// Exemplo em F#
+let mutable nomeDaVariavel = 42
+nomeDaVariavel <- nomeDaVariavel + 1
+```
+
+### Atribuição vs. comparação de igualdade
+
+No C# o símbolo `=` é usado para atribuição de valores, e o símbolo `==` é usado para a comparação de igualdade de valores.
+
+No entanto, no F# o símbolo de igualdade é usado para comparar valores e também é usado para atribuir valores inicias a outros valores ao declarar.
+
+```fsharp
+let mutable nomeDaVariavel = 42       // Atribuir 42 na declaração
+nomeDaVariavel <- nomeDaVariavel + 1  // Atribuindo novo valor
+nomeDaVariavel = nomeDaVariavel + 1   // Comparação e não atribuição
+```
+
+Para comparar a diferença, use a comparação no estilo do SQL: `<>` ao invés de `!=`
+
+```fsharp
+let nomeDaVariavel = 42             // Atribuir 42 na declaração
+nomeDaVariavel <> 43                // A comparação irá retornar true.
+nomeDaVariavel != 43                // Erro FS0020.
+```
+
+Se você acidentalmente usar `!=`, provavelmente um [erro FS0020](/troubleshooting-fsharp/#FS0020) será exibido.
+
+## Exemplo de conversão #1
+
+Dadas as regras básicas, vamos ver um exemplo real e fazer uma conversão direta.
+
+O primeiro exemplo tem um código bem simples que será convertido linha à linha. Abaixo o código em C#:
 
 ```csharp
 using System;
 using System.Collections.Generic;
 
-namespace PortingToFsharp
+namespace ConvertendoParaFsharp
 {
     public class Squarer
     {
-        public int Square(int input)
+        public int ElevarAoQuadrado(int entrada)
         {
-            var result = input * input;
-            return result;
+            var resultado = entrada * entrada;
+            return resultado;
         }
 
-        public void PrintSquare(int input)
+        public void PrintElevarAoQuadrado(int entrada)
         {
-            var result = this.Square(input);
-            Console.WriteLine("Input={0}. Result={1}", 
-              input, result);
+            var resultado = this.ElevarAoQuadrado(entrada);
+            Console.WriteLine("Entrada={0}. Resultado={1}", 
+              entrada, resultado);
         }
     }
+}
 ```
     
-### Converting "using" and "namespace"
+### Convertendo o "using" e o "namespace"
 
-These keywords are straightforward:
+Essas keywords são diretas:
 
-* 	`using` becomes `open`
-* 	`namespace` with curly braces becomes just `namespace`. 
+* 	`using` é convertida em `open`
+* 	`namespace` com chaves é convertida em apenas `namespace`. 
 
-Unlike C#, F# files do not generally declare namespaces unless they need to interop with other .NET code. The filename itself acts as a default namespace.
+Diferente do C#, os arquivos do F# não declaram namespaces, a menos que você precise fazer chamadas a bibliotecas do .NET. O próprio nome do arquivo atua como o namespace padrão.
 
-Note that the namespace, if used, must come before anything else, such as "open".  This the opposite order from most C# code.
+Observe que o namespace, se usado, deve vir antes de qualquer coisa, como "open". Essa é a ordem oposta da maior parte de um código C#.
 
-### Converting the class
+### Convertendo a classe
 
-To declare a simple class, use:
+Para declarar uma classe simples, use:
 
 ```fsharp
-type myClassName() = 
-   ... code ...  
+type nomeDaClasse() = 
+   ... código ...  
 ```
 
-Note that there are parentheses after the class name. These are required for class definitions.
+Observe que existem parenteses depois do nome da classe. Elas são obrigatórias para definir classes.
 
-More complicated class definitions will be shown in the next example, and you read the [complete discussion of classes](/posts/classes/).
+Definições mais avançadas de classes serão mostradas no próximo exemplo. Leia também o post: [Discussão completa de classes](/posts/classes/).
 
-### Converting function/method signatures
+### Convertendo assinaturas de métodos/funções
 
-For function/method signatures:
+Para assinaturas de funções/métodos
 
-* Parentheses are not needed around the parameter list
-* Whitespace is used to separate the parameters, not commas
-* Rather than curly braces, an equals sign signals the start of the function body
-* The parameters don't normally need types but if you do need them:
-  *	The type name comes after the value or parameter
-  *	The parameter name and type are separated by colons 
-  *	When specifying types for parameters, you should probably wrap the pair in parentheses to avoid unexpected behavior.
-  *	The return type for the function as a whole is prefixed by a colon, and comes after all the other parameters
+* Parenteses não são necessários ao redor da lista de parâmetros
+* Espaço em branco é usado para separar parâmetros, não vírgulas
+* Ao invés de chaves, um símbolo de igual sinaliza o início do corpo da função
+* Normalmente, tipos nos parâmetros não são necessários, mas se precisar:
+  *	O nome do tipo é declarado depois do valor ou parâmetro
+  * O nome do parâmetro e o tipo são separados por dois pontos (:)
+  *	Quando especificar os tipos de parâmetros, você provavelmente deverá envolver o parâmetro entre parâmetros para evitar comportamentos inesperados
+  *	O tipo de retorno da função como um todo, deverá ser prefixado por dois pontos e é declarado depois de todos os parâmetros
 
-Here's a C# function signature:
+Veja abaixo a assinatura de uma função em C#:
 
 ```csharp
-int Square(int input) { ... code ...}
+int ElevarAoQuadrado(int entrada) { ... código ...}
 ```
 
-and here's the corresponding F# function signature with explicit types:
+E agora a forma correspondente da função em F# com os tipos explícitos:
 
 ```fsharp
-let Square (input:int) :int =  ... code ...
+let ElevarAoQuadrado (entrada:int) :int =  ... código ...
 ```
 
-However, because F# can normally infer the parameter and return types, you rarely need to specify them explicitly.
+Você raramente irá precisar de especificar os tipos de retorno e parâmetros da função, pois normalmente o F# infere o tipo de retorno.
 
-Here's a more typical F# signature, with inferred types:
+Agora uma assinatura típica de uma função em F#, com tipos inferidos:
 
 ```fsharp
-let Square input =  ... code ...
+let ElevarAoQuadrado entrada =  ... código ...
 ```
 
-### void
+### Keyword void
 
-The `void` keyword in C# is generally not needed, but if required, would be converted to `unit`
+Geralmente não é necessário especificar a keyword `void` no C#, mas se necessário na conversão, use `unit`
 
-So the C# code:
+O código C#:
 
 ```csharp
-void PrintSquare(int input) { ... code ...}
+void PrintElevarAoQuadrado(int entrada) { ... código ...}
 ```
 
-could be converted to the F# code:
+Poderia ser convertido para:
 
 ```fsharp
-let PrintSquare (input:int) :unit =  ... code ...
+let PrintElevarAoQuadrado (entrada:int) :unit =  ... código ...
 ```
 
-but again, the specific types are rarely needed, and so the F# version is just:
+Mas novamente, é muito raro especificar os típos. A versão sem tipos no F# seria:
 
 ```fsharp
-let PrintSquare input =  ... code ...
+let PrintElevarAoQuadrado entrada =  ... código ...
 ```
 
-### Converting function/method bodies
+### Convertendo corpor de funções/métodos
 
-In a function body, you are likely to have a combination of:
+Em um corpo de função, você geralmente tem a combinação de:
 
-* 	Variable declarations and assignments
-* 	Function calls
-* 	Control flow statements
-* 	Return values
+* 	Declaração e atribuição de variáveis
+* 	Chamadas de funções
+* 	Statements de controle de fluxo
+* 	Valores de retorno
 
-We'll have a quick look at porting each of these in turn, except for control flow, which we'll discuss later.
+Daremos uma olhada rápida na conversão de cada um desses, exceto pelo fluxo de controle, que será discutido depois.
 
-### Converting variable declarations
+### Convertendo declaração de variáveis
 
-Almost always, you can use `let` on its own, just like `var` in C#:
+Quase sempre, você poderá usar `let`, da mesma forma que `var` em C#:
 
 ```csharp
-// C# variable declaration
-var result = input * input;
+// Declarando variáveis no C#
+var resultado = entrada * entrada;
 ```
 
 ```fsharp
-// F# value declaration
-let result = input * input
+// Declarando valores no F#
+let resultado = entrada * entrada
 ```
 
-Unlike C#, you must always assign ("bind") something to an F# value as part of its declaration.
+Diferente do C#, você sempre deverá atribuir algo para um valor do F# como parte da sua declaração.
 
 ```csharp
-// C# example 
-int unassignedVariable; //valid
+// Exemplo C#
+int variavelSemAtribuicao; // válido
 ```
 
 ```fsharp
-// F# example 
-let unassignedVariable // not valid
+// Exemplo F#
+let variavelSemAtribuicao // inválido
 ```
 
-As noted above, if you need to change the value after its declaration, you must use the "mutable" keyword.
+Como observado acima, se você precisa mudar o valor depois da declaração, você deve torná-lo mutável com a keyword "mutable".
 
-If you need to specify a type for a value, the type name comes after the value or parameter, preceded by a colon.
+Se você precisa especificar um tipo para um valor, o nome do tipo é inserido depois do valor ou parâmetro, separado por dois pontos.
 
 ```csharp
-// C# example 
-int variableName = 42;
+// Exemplo C#
+int nomeDaVariavel = 42;
 ```
 
 ```fsharp
-// F# example 
-let variableName:int = 42
+// Exemplo F#
+let nomeDaVariavel:int = 42
 ```
 
-### Converting function calls
+### Convertendo chamada de funçoes
 
-When calling a native F# function, there is no need for parentheses or commas. In other words, the same rules apply for calling a function as when defining it. 
+Ao chamar funções nativas do F#, não há necessidade de parênteses ou vírgulas. Em outras palavras, chamamos funções no F# da mesma forma em que são declaradas.
 
-Here's C# code for defining a function, then calling it:
+Veja abaixo um código C# para definir uma função e depois chamá-la:
 
 ```csharp
-// define a method/function 
-int Square(int input) { ... code  ...}
+// definindo um método/função
+int ElevarAoQuadrado(int entrada) { ... código  ...}
 
-// call it
-var result = Square(input);
+// chamada
+var resultado = ElevarAoQuadrado(entrada);
 ```
 
-However, because F# can normally infer the parameter and return types, you rarely need to specify them explicitly
-So here's typical F# code for defining a function and then calling it:
+Pelo fato de que o F# normalmente infere os tipos de retorno e parâmetros, raramente você terá que especificá-los
+Então, segue abaixo um código típico de como definir e chamar uma função no F#:
 
 ```fsharp
-// define a function 
-let Square input = ... code ...
+// definindo uma função
+let ElevarAoQuadrado entrada = ... code ...
 
-// call it
-let result = Square input
+// chamada
+let resultado = ElevarAoQuadrado entrada
 ```
 
-### Return values
+### Valores de retorno
 
-In C#, you use the `return` keyword. But in F#, the last value in the block is automatically the "return" value. 
+No C#, você usa a keyword `return`. Mas no F#, o último valor no bloco de código se torna o valor de retorno.
 
-Here's the C# code returning the `result` variable.
+Veja abaixo um exemplo:
 
 ```csharp
-public int Square(int input)
+public int ElevarAoQuadrado(int entrada)
 {
-    var result = input * input;
-    return result;   //explicit "return" keyword
+    var resultado = entrada * entrada;
+    return resultado;   //Keyword explícita
 }
 ```
 
-And here's the F# equivalent.
+O equivalente no F#:
 
 ```fsharp
-let Square input = 
-    let result = input * input
-    result        // implicit "return" value
+let ElevarAoQuadrado entrada = 
+    let resultado = entrada * entrada
+    resultado        // Valor de retorno implícito
 ```
 
-This is because F# is expression-based. Everything is an expression, and the value of a block expression as a whole is just the value of the last expression in the block. 
+Isso se deve por que o F# é baseado em expressões. Tudo se torna uma expressão e o valor de uma expressão de bloco como um todo é só o valor da última expressão no bloco.
 
-For more details on expression-oriented code, see ["expressions vs statements"](/posts/expressions-vs-statements/).
+Para mais detalhes no assunto, veja o post ["expressões vs statements"](/posts/expressions-vs-statements/).
 
-### Printing to the console
+### Exibindo valores no console
 
-To print output in C#, you generally use `Console.WriteLine` or similar. In F#, you generally use `printf` or similar, which is typesafe.  ([More details on using "printf" family](/posts/printf)).
+Para exibir valores de saída no C#, é comum vermos o método `Console.WriteLine` ou similar. No F#, geralmente usamos a função `printf`, que é *typesafe*. ([Mais detalhes no uso da função "printf"](/posts/printf)).
 
-### The complete port of example #1
+### A conversão completa do exemplo #1
 
-Putting it all together, here is the complete direct port of example #1 to F#.
+Resumindo tudo, abaixo segue a conversão completa do exemplo #1 em F#:
 
-The C# code again:
+O código C# novamente:
 ```csharp
 using System;
 using System.Collections.Generic;
 
-namespace PortingToFsharp
+namespace ConvertendoParaFsharp
 {
     public class Squarer
     {
-        public int Square(int input)
+        public int ElevarAoQuadrado(int entrada)
         {
-            var result = input * input;
-            return result;
+            var resultado = entrada * entrada;
+            return resultado;
         }
 
-        public void PrintSquare(int input)
+        public void PrintElevarAoQuadrado(int entrada)
         {
-            var result = this.Square(input);
-            Console.WriteLine("Input={0}. Result={1}", 
-              input, result);
+            var resultado = this.ElevarAoQuadrado(entrada);
+            Console.WriteLine("Entrada={0}. Resultado={1}", 
+              entrada, resultado);
         }
     }
+}
 ```
 
-And the equivalent F# code:
+O equivalente em F#:
 
 ```fsharp
-namespace PortingToFsharp
+namespace ConvertendoParaFsharp
 
 open System
 open System.Collections.Generic
 
 type Squarer() =  
 
-    let Square input = 
-        let result = input * input
-        result
+    let ElevarAoQuadrado entrada = 
+        let resultado = entrada * entrada
+        resultado
 
-    let PrintSquare input = 
-        let result = Square input
-        printf "Input=%i. Result=%i" input result
+    let PrintElevarAoQuadrado entrada = 
+        let resultado = ElevarAoQuadrado entrada
+        printf "Entrada=%i. Resultado=%i" entrada resultado
 ```        
     
 

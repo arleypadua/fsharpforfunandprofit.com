@@ -1,9 +1,9 @@
 ---
 layout: series_index
-title: "The 'porting from C#' series"
+title: "Série: Migrando do C#"
 seriesIndexId: "Porting from C#"
 seriesIndexOrder : 18
 permalink: /series/porting-from-csharp.html
 ---
 
-Do you want to port C# code to F#? In this series of posts we'll look at various approaches to this, and the design decisions and trade-offs involved.
+Você sempre teve curiosidade de iniciar F# vindo com uma experiência de C# ? Nessa série de posts vamos olhar várias maneiras de fazer essa conversão e desenvolver as melhores práticas envolvidas.

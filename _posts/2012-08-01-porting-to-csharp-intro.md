@@ -1,79 +1,79 @@
 ---
 layout: post
-title: "Porting from C# to F#: Introduction"
+title: "Migrando do C# para o F#: Introdução"
 description: "Three approaches to porting existing C# code to F#"
 nav: fsharp-types
 seriesId: "Porting from C#"
 seriesOrder: 1
 ---
 
-*NOTE: Before reading this series, I suggest that you read the following series as a prerequisite: ["thinking functionally"](/series/thinking-functionally.html), ["expressions and syntax"](/series/expressions-and-syntax.html), and ["understanding F# types"](/series/understanding-fsharp-types.html).* 
+*Obs.: Antes de ler os posts dessa série, recomendo que você leia as seguintes séries como pré-requisito: ["Pensamento Funcional"](/series/thinking-functionally.html), ["Expressões e Sintaxe"](/series/expressions-and-syntax.html), e ["Entendendo os Tipos no F#"](/series/understanding-fsharp-types.html).*
 
-For many developers, the next step after learning a new language might be to port some existing code over to it, so that they can get a good feel for the differences between the two languages.
+Para a maioria dos desenvolvedores ao aprender uma nova linguagem de programação, o mais comum é tentar converter um código existente na nova linguagem, com o objetivo de ter um bom comparativo entre as duas linguagens.
 
-As we pointed out earlier, functional languages are very different from imperative languages, and so trying to do a direct port of imperative code to a functional language is often not possible, and even if a crude port is done successfully, the ported code will probably not be using the functional model to its best advantage.
+Como mencionado anteriormente, linguagen de programação funcional é muito diferente da linguagem de programação convencional (imperativa), e tentar fazer uma conversão de uma para a outra, geralmente não é possível, mesmo se for possível realizar a conversão, o novo código provavelmente não estará usando o modelo de linguagem funcional como vantagem.
 
-Of course, F# is a multi-paradigm language, and includes support for object-oriented and imperative techniques, but even so, a direct port will generally not be the best way to write the corresponding F# code.
+É claro que o F# é uma linguagem *multi-paradigma*, incluindo suporte para orientação ao objeto e técnicas de linguagens imperativas, mas mesmo assim, uma conversão direta em geral não será a melhor forma de escrever um código em linguagem funcional.
 
-So, in this series, we'll look at various approaches to porting existing C# code to F#. 
+Então, nessas séries, vamos ver diversas maneiras de migrar um código existente em C# para um código em F#.
 
-## Levels of porting sophistication ##
+## Níveis de sofisticação para conversão ##
 
-If you recall the diagram from an [earlier post](/posts/key-concepts), there are four key concepts that differentiate F# from C#.
+Como descrito [nesse post](/posts/key-concepts), existem quatro conceitos-chave que diferenciam o F# do C#.
 
-* Function-oriented rather than object-oriented
-* Expressions rather than statements 
-* Algebraic types for creating domain models
-* Pattern matching for flow of control
+* Orientado à função e não à objeto.
+* Expressões e não *statements*
+* Tipos Algébricos para criar modelos de domínio
+* Pattern matching (*Correspondência de padrões*) para controle de fluxo
 
-![four key concepts](/assets/img/four-concepts2.png)
+![quatro conceitos-chave](/assets/img/four-concepts2.png)
 
-And, as explained in that post and its sequels, these aspects are not just academic, but offer concrete benefits to you as a developer. 
+E como explicado nesse post e suas sequências, esses aspectos não são somente acadêmicos, mas fornecem ao desenvolvedor benefícios concretos.
 
-So I have divided the porting process into three levels of sophistication (for lack of a better term), which represent how well the ported code exploits these benefits.
+Então eu dividi o processo de conversão em três níveis de sofisticação (na falta de um termo melhor), que representa o nível que o código convertido explorar os benefícios da linguagem funcional.
 
-### Basic Level: Direct port ###
+### Nível Básico: Conversão Direta ###
 
-At this first level, the F# code is a direct port (where possible) of the C# code.  Classes and methods are used instead of modules and functions, and values are frequently mutated.
+No primeiro nível, o código F# é uma conversão direta (onde possível) do código C#. Classes e métodos são usados ao invés de módulos e funções, e valores são frequentemente mutáveis.
 
-### Intermediate Level: Functional code ###
+### Nível Intermediário: Código Funcional ###
 
-At the next level, the F# code has been refactored to be fully functional.  
+Nesse nível, o código F# é refatorado para se tornar completamente funcional.
 
-* Classes and methods have been replaced by modules and functions, and values are generally immutable.  
-* Higher order functions are used to replace interfaces and inheritance.
-* Pattern matching is used extensively for control flow.
-* Loops have been replaced with list functions such as "map" or recursion.
+* Classes e métodos são substituídos por módulos e funções. Os valores são geralmente imutáveis.
+* Funções de ordem superior são usadas para substituir as interfaces e herança.
+* Pattern matching é usado para o controle de fluxo
+* Loops são substituídos por funções de lista, por exemplo "map" ou recursão
 
-There are two different paths that can get you to this level. 
+Existem dois caminhos diferentes para chegar nesse nível
 
-* The first path is to do a basic direct port to F#, and then refactor the F# code.
-* The second path is to convert the existing imperative code to functional code while staying in C#, and only then port the functional C# code to functional F# code!  
+* O primeiro caminho é uma conversão direta para o F# e depois refatorar o código.
+* O segundo caminho é converter o código convencional existente para o código funcional ainda no C#, e só depois converter o código funcional em C# para o código F# funcional.
 
-The second option might seem clumsy, but for real code it will probably be both faster and more comfortable. Faster because you can use a tool such as Resharper to do the refactoring, and more comfortable because you are working in C# until the final port. This approach also makes it clear that the hard part is not the actual port from C# to F#, but the conversion of imperative code to functional code!  
+A segunda opção pode parecer estranha, mas para a conversão de um código real, provavelmente será a mais rápida e confortável. Mais rápida pois você pode usar uma ferramenta, como o Resharper para fazer a refatoração, e mais confortável porque você está desenvolvendo em C# até o momento da conversão final. Esse caminho de migração também torna evidente que a parte mais difícil não é a conversão de C# para F#, mas a conversão do código imperativo para o código fiuncional.
 
-### Advanced Level: Types represent the domain ###
+### Nível Avançado: Tipos representando o domínio ###
 
-At this final level, not only is the code functional, but the design itself has been changed to exploit the power of algebraic data types (especially union types). 
+Nesse nível final, não só o código é funcional, mas o design é alterado para obter vantagem do poder dos tipos de dados algébricos, especialmente os union types (*tipos de união*).
 
-The domain will have been [encoded into types](/posts/designing-with-types-single-case-dus/) such that [illegal states are not even representable](/posts/designing-with-types-making-illegal-states-unrepresentable/), and [correctness is enforced at compile time](/posts/correctness-type-checking/).
-For a concrete demonstration of the power of this approach, see the [shopping cart example](/posts/designing-for-correctness) in the ["why use F#" series](/series/why-use-fsharp.html) and the whole ["Designing with types" series](/series/designing-with-types.html).
+O domínio é [codificado em tipos](/posts/designing-with-types-single-case-dus/) para que os [estados ilegais não sejam representáveis](/posts/designing-with-types-making-illegal-states-unrepresentable/) e o [correto é forçado em tempo de compilação](/posts/correctness-type-checking/).
+Para uma demonstração concreta do poder dessa abordagem, veja o [exemplo do carrinho de compras](/posts/designing-for-correctness) na série de posts ["porque usar o F#?"](/series/why-use-fsharp.html) e toda a série de posts ["Modelando com tipos"](/series/designing-with-types.html).
 
-This level can only be done in F#, and is not really practical in C#. 
+Esse nível só pode ser feito em F#.
 
-### Porting diagram ###
+### Diagrama de conversão ###
 
-Here is a diagram to help you visualize the various porting paths described above.
+Veja abaixo um diagrama para te ajudar a visualizar todos os caminhos de conversão descritos acima.
 
-![four key concepts](/assets/img/porting-paths.png)
- 
-## The approach for this series ##
+![níveis de conversão](/assets/img/porting-paths.png)
 
-To see how these three levels work in practice, we'll apply them to some worked examples:
+## A abordagem para essa série ##
 
-* The first example is a simple system for creating and scoring a ten-pin bowling game, based on the code from the well known "bowling game kata" described by "Uncle" Bob Martin. The original C# code has only one class and about 70 lines of code, but even so, it demonstrates a number of important principles.
-* Next, we'll look at some shopping cart code, based on [this example](/posts/designing-for-correctness/).
-* The final example is code that represents states for a subway turnstile system, also based on an example from Bob Martin. This example demonstrates how the union types in F# can represent a state transition model more easily than the OO approach. 
+Para ver como esses três níveis funcionam na prática, vamos aplicá-los em alguns exemplos:
 
-But first, before we get started on the detailed examples, we'll go back to basics and do some simple porting of some code snippets. That will be the topic of the next post.
+* O primeiro exemplo é um sistema simples para criar e pontuar o jogo de boliche de dez pinos, baseado no código do conhecido kata "bowling game" descrito pelo "Uncle" Bob Martin. O código original em C# só tem uma classe e aproximadamente 70 linhas de código, ainda assim é possível demonstrar um série de princípios importantes.
+* Após o primeiro exemplo, vamos olhar em um código de carrinho de compras, baseado [nesse exemplo](/posts/designing-for-correctness/).
+* O exemplo final é um código que representa os estados de um sistema de catraca de metrô, também baseado em um exemplo do Bob Martin. Esse exemplo demonstra como os union types no F# podem representar um modelo de estado de transição com mais facilidade do que uma abordagem orientada ao objeto.
+
+Mas primeiro, vamos começar nos exemplos detalhados, vamos voltar ao básico e fazer algumas conversões simples. Isso será o assunto do próximo post.
 
