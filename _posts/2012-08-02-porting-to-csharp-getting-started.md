@@ -7,17 +7,17 @@ seriesId: "Porting from C#"
 seriesOrder: 2
 ---
 
-Antes de começar com os exemplos detalhados, vamos voltar ao básico e fazer algumas conversões triviais.
+Antes de começar com os exemplos, vamos voltar ao básico e fazer algumas conversões triviais.
 
-Nesse posst, vamos chegar à equivalência de statements e keywords mais próxima do F# e do C# para te guiar ao fazer as conversões diretas.
+Nesse post, vamos ver a equivalência mais próxima de statements e keywords entre F# e C# te guiando nas conversões diretas.
 
 ## Sintaxe básica de conversão ##
 
-Antes de iniciar a conversão, você precisa entender a diferença entra a sintaxe do F# e do F#. Essa seção apresenta algumas instruções gerais para converter de um para outro. (Como um rápido lembrete da sintaxe do F# como um todo, veja o post: ["Sintaxe do F# em 60 segundos"](/posts/fsharp-in-60-seconds/))
+Antes de iniciar a conversão, você precisa entender a diferença entra a sintaxe do F# e do C#. Essa seção apresenta algumas instruções gerais para realizar a conversão. (Como um rápido lembrete da sintaxe do F#, veja o post: ["Sintaxe do F# em 60 segundos"](/posts/fsharp-in-60-seconds/))
 
 ### Chaves e identação ###
 
-O C# usa as chaves para indicar o início e o fim de um bloco de código. O F# utiliza a identação para definir blocos de código.
+O C# usa as chaves para indicar o início e o fim de um bloco de código. O F# utiliza a identação para definir seus blocos de código.
 
 Chaves também são usadas no F#, mas ao invés do C#, são usadas:
 
@@ -32,18 +32,18 @@ Diferente do C#, o F# não exige nenhum tipo de sinalizador de fim da linha.
 
 ### Vírgulas
 
-O F# não usa vírgulas para separar lista de elementos como é feito no C#. Lembre-se de não usar vírgulas na conversão!
+O F# não usa vírgulas para separar uma lista de elementos como é feito no C#. Lembre-se de não usar vírgulas na conversão!
 
 *Para separar uma lista de elementos, use ponto e vírgula ao invés da vírgula*
 
 ```csharp
 // Exemplo em C#
-var list = new int[] { 1,2,3 }
+var list = new int[] { 1,2,3 };
 ```
 
 ```fsharp
 // Exemplo em F#
-let list = [1;2;3] // ponto e vírgula
+let list = [1;2;3] // ponto e vírgula separando a listagem
 ```
 
 *Para separar parâmetros de funções nativas do F#, use espaços em branco*
@@ -63,10 +63,10 @@ Vírgulas são geralmente usadas para tuplas ou para separar parâmetros ao cham
 
 ### Declarando variáveis, funções e tipos
 
-Para declarar variáveis e funções no F#, faça da seguinte forma:
+Para declarar valores e funções no F#, faça da seguinte forma:
 
 ```fsharp
-let qualquerCoisa = // definição
+let qualquerValor = // definição
 ```
 
 Para declarar todos os tipos (classes, estruturas, interfaces, etc.) faça da seguinte forma:
@@ -75,7 +75,7 @@ Para declarar todos os tipos (classes, estruturas, interfaces, etc.) faça da se
 type qualquerTipo = // definição
 ```
 
-O uso do símbolo `=` representa uma diferença importante entre o F# e o C#. Quando no C# se usa chaves, no F# usa-se o símbolo `=` e então o bloco de código seguinte deve ser identado.
+O uso do símbolo `=` representa uma diferença importante entre o F# e o C#. Quando usamos as chaves no C#, no F# usamos o símbolo `=` e então o bloco de código identado.
 
 ### Valores mutáveis
 
@@ -90,8 +90,8 @@ nomeDaVariavel = nomeDaVariavel + 1
 
 ```fsharp
 // Exemplo em F#
-let mutable nomeDaVariavel = 42
-nomeDaVariavel <- nomeDaVariavel + 1
+let mutable nomeDoValor = 42
+nomeDoValor <- nomeDoValor + 1
 ```
 
 ### Atribuição vs. comparação de igualdade
@@ -101,17 +101,17 @@ No C# o símbolo `=` é usado para atribuição de valores, e o símbolo `==` é
 No entanto, no F# o símbolo de igualdade é usado para comparar valores e também é usado para atribuir valores inicias a outros valores ao declarar.
 
 ```fsharp
-let mutable nomeDaVariavel = 42       // Atribuir 42 na declaração
-nomeDaVariavel <- nomeDaVariavel + 1  // Atribuindo novo valor
-nomeDaVariavel = nomeDaVariavel + 1   // Comparação e não atribuição
+let mutable nomeDoValor = 42       // Atribuir 42 na declaração
+nomeDoValor <- nomeDoValor + 1     // Atribuindo novo valor
+nomeDoValor = nomeDoValor + 1      // Comparação e não atribuição
 ```
 
 Para comparar a diferença, use a comparação no estilo do SQL: `<>` ao invés de `!=`
 
 ```fsharp
-let nomeDaVariavel = 42             // Atribuir 42 na declaração
-nomeDaVariavel <> 43                // A comparação irá retornar true.
-nomeDaVariavel != 43                // Erro FS0020.
+let nomeDoValor = 42             // Atribuir 42 na declaração
+nomeDoValor <> 43                // A comparação irá retornar true.
+nomeDoValor != 43                // Erro FS0020.
 ```
 
 Se você acidentalmente usar `!=`, provavelmente um [erro FS0020](/troubleshooting-fsharp/#FS0020) será exibido.
@@ -148,7 +148,7 @@ namespace ConvertendoParaFsharp
     
 ### Convertendo o "using" e o "namespace"
 
-Essas keywords são diretas:
+Essas keywords são convertidas de forma direta:
 
 * 	`using` é convertida em `open`
 * 	`namespace` com chaves é convertida em apenas `namespace`. 
@@ -175,13 +175,13 @@ Definições mais avançadas de classes serão mostradas no próximo exemplo. Le
 Para assinaturas de funções/métodos
 
 * Parenteses não são necessários ao redor da lista de parâmetros
-* Espaço em branco é usado para separar parâmetros, não vírgulas
+* Espaço em branco é usado para separar parâmetros e não vírgulas
 * Ao invés de chaves, um símbolo de igual sinaliza o início do corpo da função
 * Normalmente, tipos nos parâmetros não são necessários, mas se precisar:
   *	O nome do tipo é declarado depois do valor ou parâmetro
-  * O nome do parâmetro e o tipo são separados por dois pontos (:)
-  *	Quando especificar os tipos de parâmetros, você provavelmente deverá envolver o parâmetro entre parâmetros para evitar comportamentos inesperados
-  *	O tipo de retorno da função como um todo, deverá ser prefixado por dois pontos e é declarado depois de todos os parâmetros
+  * O nome do parâmetro e o tipo são separados por dois pontos `:`
+  *	Quando especificar os tipos de parâmetros, você provavelmente deverá envolver o parâmetro entre parênteses, evitando comportamentos inesperados
+  *	O tipo de retorno da função como um todo, deverá ser prefixado por dois pontos e será declarado depois de todos os parâmetros
 
 Veja abaixo a assinatura de uma função em C#:
 
@@ -195,9 +195,9 @@ E agora a forma correspondente da função em F# com os tipos explícitos:
 let ElevarAoQuadrado (entrada:int) :int =  ... código ...
 ```
 
-Você raramente irá precisar de especificar os tipos de retorno e parâmetros da função, pois normalmente o F# infere o tipo de retorno.
+Você raramente precisará de especificar os tipos de retorno e parâmetros da função, pois normalmente o F# infere os tipos usados.
 
-Agora uma assinatura típica de uma função em F#, com tipos inferidos:
+Agora uma assinatura comum de uma função em F# com tipos inferidos:
 
 ```fsharp
 let ElevarAoQuadrado entrada =  ... código ...
@@ -225,7 +225,7 @@ Mas novamente, é muito raro especificar os típos. A versão sem tipos no F# se
 let PrintElevarAoQuadrado entrada =  ... código ...
 ```
 
-### Convertendo corpor de funções/métodos
+### Convertendo corpo de funções/métodos
 
 Em um corpo de função, você geralmente tem a combinação de:
 
@@ -234,11 +234,11 @@ Em um corpo de função, você geralmente tem a combinação de:
 * 	Statements de controle de fluxo
 * 	Valores de retorno
 
-Daremos uma olhada rápida na conversão de cada um desses, exceto pelo fluxo de controle, que será discutido depois.
+Daremos uma olhada rápida na conversão de cada um desses aspectos, exceto o fluxo de controle, que será discutido depois.
 
 ### Convertendo declaração de variáveis
 
-Quase sempre, você poderá usar `let`, da mesma forma que `var` em C#:
+Quase sempre, você poderá usar `let` da mesma forma que `var` em C#:
 
 ```csharp
 // Declarando variáveis no C#
@@ -290,8 +290,8 @@ int ElevarAoQuadrado(int entrada) { ... código  ...}
 var resultado = ElevarAoQuadrado(entrada);
 ```
 
-Pelo fato de que o F# normalmente infere os tipos de retorno e parâmetros, raramente você terá que especificá-los
-Então, segue abaixo um código típico de como definir e chamar uma função no F#:
+Pelo fato de que o F# normalmente infere os tipos de retorno e parâmetros, raramente você terá que especificá-los.
+Segue abaixo um código típico de como definir e chamar uma função no F#:
 
 ```fsharp
 // definindo uma função
